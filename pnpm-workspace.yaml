@@ -1,0 +1,3 @@
+# PNPM 工作区配置文件，用于管理 Mono-repo 项目
+packages:
+  - "packages/*"  # 将 packages 目录下的所有子项目包含为工作区包，pnpm install 时会自动链接

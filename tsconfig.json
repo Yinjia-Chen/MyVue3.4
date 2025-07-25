@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",             // 输出目录
+    "sourceMap": true,            // 采用 sourceMap
+    "target": "es2016",           // 目标 JavaScript 版本
+    "module": "esnext",           // 模块格式
+    "moduleResolution": "node",   // 模块解析方式
+    "strict": false,              // 关闭严格模式
+    "resolveJsonModule": true,    // 解析 .json 文件
+    "esModuleInterop": true,      // 支持 ES 模块与 CommonJS 互操作
+    "jsx": "preserve",            // 保留 JSX 语法
+    "lib": ["esnext", "dom"]      // 引入标准库声明
+  }
+}
