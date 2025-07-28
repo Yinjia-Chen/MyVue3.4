@@ -9,6 +9,12 @@
     "resolveJsonModule": true,    // 解析 .json 文件
     "esModuleInterop": true,      // 支持 ES 模块与 CommonJS 互操作
     "jsx": "preserve",            // 保留 JSX 语法
-    "lib": ["esnext", "dom"]      // 引入标准库声明
+    "lib": ["esnext", "dom"],     // 引入标准库声明
+    "baseUrl": ".",               // 设置非相对模块导入的基准路径为项目根目录
+    "paths": {                    // 配置路径别名映射，简化模块引用
+      "@vue/*":[                  // 当 import 路径以 "@vue/" 开头时
+        "packages/*/src"          // 映射到 packages 目录下对应子包的 src 文件夹
+      ]
+    }
   }
 }
