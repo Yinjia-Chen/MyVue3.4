@@ -25,16 +25,23 @@ const format = args.f || 'iife' // 打包后的模块化规范
 
 // 入口文件 根据命令行提供的 target 解析
 const entry = resolve(__dirname, `../packages/${target}/src/index.ts`)
+// 拿到要打包的目标文件的 pakcage.json
+const pkg = require(`../packages/${target}/package.json`)
 
 // 根据需要进行打包
 
 
 esbuild.context({
   entryPoints: [entry], // 入口
-  outfile: resolve(__dirname, `../packages/dist/${target}.js`), // 出口
+  outfile: resolve(__dirname, `../packages/${target}/dist/${target}.js`), // 出口
   bundle: true, // 例：reactivity依赖shared，会一起打包
   platform: 'browser', // 打包后给浏览器使用
   sourcemap: true, // 可以调试源代码
   // format: format
-  format, // cjs or esm or iife
+  format, // cjs esm iife
+  // 当 format 是 iife 时，必须提供，用于给打包产物起名，随后可以用此属性名访问到打包产物
+  globalName: pkg.buildOptions?.name, 
+}).then((ctx) => {
+  console.log("start dev");
+  return ctx.watch(); // 监控入口文件持续进行打包
 })
