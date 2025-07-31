@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module">
+    // 体验官方打包产物
+    // import { reactive, effect } from "/node_modules/@vue/reactivity/dist/reactivity.esm-browser.js";
+
+    // 引入手写的
+    import { reactive, effect } from "./reactivity.js";
+
+
+    // reactive：对数据，让数据变成响应式的
+    // effect：对视图，副作用，数据变化后可以让 effect 重新执行 组件、watch、computed 等都基于 effect 实现
+
+    const state = reactive({ name: 'Kya', age: 20 });
+
+    // effect 默认执行一次
+    effect(() => {
+      app.innerHTML = `姓名：${state.name} , 年龄：${state.age}`
+    })
+
+    // 数据更新effect再执行一次
+    setInterval(() => {
+      state.age--;
+    }, 1000);
+  </script>
+</body>
+
+</html>
