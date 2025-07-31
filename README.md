@@ -82,5 +82,86 @@
 
 ## 3. 源码实现：
 
-### 3.1 reactivity
+> 先 pnpm run dev 启动打包，确保打包内容实时更新再写
 
+### 3.1 reactivity / reactive
+
+> 设计点：
+>
+> 1. 统一检查：是否是对象，不是对象直接返回
+> 2. 响应式设计：给对象做劫持代理，添加 get / set
+> 3. 实现缓存（性能优化）：设计 WeakMap，防止内存泄漏，劫持前检查缓存表，存在直接返回
+> 4. 重复代理（性能优化）：在 get 中维护一个 IS_REACTIVE 属性，访问该属性，未代理对象返回 undefined 跳过，已代理对象访问时触发 get ，访问到该属性返回 true，表示属性存在，意味着已经代理过，直接返回
+
+1. 统一检查：是否是对象，不是对象直接返回
+
+   ```typescript
+   if (!isObject(target)) {
+     return target;
+   }
+   ```
+
+2. 响应式设计：给对象做劫持代理，添加 get / set
+
+   ```typescript
+   // 对象代理做劫持
+   let proxy = new Proxy(target, mutableHandlers)
+   const mutableHandlers: ProxyHandler<any> = {
+     get(target, key, receiver){
+     },
+     set(target, key, value, receiver) {
+       return true
+     }
+   }
+   ```
+
+   >`Proxy(obj, handler)` JS ES6 原生 API 用于实现对象的劫持（代理）
+   >
+   >```typescript
+   Proxy(target, handler)
+   // target: 要劫持的对象
+   // handler: 一个对象，固定了 trap (陷阱) 函数
+   const handler: ProxyHandler<any> = {
+    get(target, propKey, receiver){};
+    set(target, propKey, value, receiver){};
+       // target: 被代理的原始对象
+       // propKey: 当前访问/设置的属性名
+       // receiver: 触发本次 get/set 操作的对象
+   }
+   >```
+
+3. 实现缓存（性能优化）：设计 WeakMap，防止内存泄漏，劫持前检查缓存表，存在直接返回
+
+4. ```typescript
+   const reactiveMap = new WeakMap()
+   // 根据对象缓存 代理后的结果
+   reactiveMap.set(target,proxy)
+   // 取缓存，如果已缓存，直接返回
+   const existProxy = reactiveMap.get(target);
+   if (existProxy) {
+     return existProxy
+   }
+   ```
+
+5. 重复代理（性能优化）：在 get 中维护一个 IS_REACTIVE 属性，访问该属性，未代理对象返回 undefined 跳过，已代理对象访问时触发 get ，访问到该属性返回 true，表示属性存在，意味着已经代理过，直接返回
+
+   ```typescript
+   // 创建一个枚举，标记是否是响应式（已代理）
+   enum ReactiveFlags {
+     IS_REACTIVE = '__v_isReactive'
+   }
+   
+   get(target, key, receiver) {
+     // 如果访问到对象上有 IS_REACTIVUE 返回true
+     if (key === ReactiveFlags.IS_REACTIVE) {
+       return true
+     }
+   },
+     
+   // 触发get，如果已经代理过，直接返回
+   if (target[ReactiveFlags.IS_REACTIVE]) {
+     return target;
+   }
+   ```
+
+6. 
