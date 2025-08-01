@@ -1,24 +1,8 @@
 import { isObject } from "@vue/shared"
+import { ReactiveFlags,mutableHandlers } from "./baseHandler";
 
 // 缓存表：用于记录代理后的结果，可以复用  WeakMap 防止内存泄漏
 const reactiveMap = new WeakMap()
-// 创建一个枚举，标记是否是响应式（已代理）
-enum ReactiveFlags {
-  IS_REACTIVE = '__v_isReactive'
-}
-// reactive / shallowReactive
-// Proxy 的参数2：包含 trap 函数的对象
-const mutableHandlers: ProxyHandler<any> = {
-  get(target, key, receiver) {
-    // 如果访问到对象上有 IS_REACTIVUE 返回true
-    if (key === ReactiveFlags.IS_REACTIVE) {
-      return true
-    }
-  },
-  set(target, key, value, receiver) {
-    return true
-  }
-}
 
 // 方法：创建响应式对象
 function createReactiveObject(target) {

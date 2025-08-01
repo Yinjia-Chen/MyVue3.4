@@ -7,18 +7,21 @@ function isObject(value) {
   return typeof value === "object" && value !== null;
 }
 
-// packages/reactivity/src/reactive.ts
-var reactiveMap = /* @__PURE__ */ new WeakMap();
+// packages/reactivity/src/baseHandler.ts
 var mutableHandlers = {
   get(target, key, receiver) {
     if (key === "__v_isReactive" /* IS_REACTIVE */) {
       return true;
     }
+    return Reflect.get(target, key, receiver);
   },
   set(target, key, value, receiver) {
-    return true;
+    return Reflect.set(target, key, value, receiver);
   }
 };
+
+// packages/reactivity/src/reactive.ts
+var reactiveMap = /* @__PURE__ */ new WeakMap();
 function createReactiveObject(target) {
   if (!isObject(target)) {
     return target;
