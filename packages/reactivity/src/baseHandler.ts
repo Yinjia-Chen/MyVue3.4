@@ -1,3 +1,5 @@
+import { activeEffect } from "./effect";
+
 // 创建一个枚举，标记是否是响应式（已代理）
 export enum ReactiveFlags {
   IS_REACTIVE = '__v_isReactive'
@@ -14,7 +16,7 @@ export const mutableHandlers: ProxyHandler<any> = {
     // 当取值的时候 应该让响应式属性 和 effect 映射起来
 
     // 依赖收集 todo...
-
+    console.log(activeEffect,key);
     // return target[key] // 如果 target 中有函数用到 this，this指向targer 而不是receiver, 此时访问属性不拦截
     return Reflect.get(target, key, receiver)
   },

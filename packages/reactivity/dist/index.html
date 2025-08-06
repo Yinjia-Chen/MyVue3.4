@@ -23,14 +23,21 @@
     let obj = {name:'myvue',version:'3.4'}
     const state = reactive(obj);
     console.log(state.name,state.version);
-    // effect 默认执行一次
-    effect(() => {
-      app.innerHTML = `名称：${state.name} , 版本：${state.age}`
+
+
+    effect(()=>{
+      
     })
 
+
+    // effect 默认执行一次
+    // effect(() => {
+    //   app.innerHTML = `名称：${state.name} , 版本：${state.version}`
+    // })
+
     // 数据更新effect再执行一次
-    // setInterval(() => {
-    //   state.age--;
+    // setTimeout(() => {
+    //   state.version++;
     // }, 1000);
   </script>
 </body>

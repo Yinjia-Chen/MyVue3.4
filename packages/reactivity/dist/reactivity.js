@@ -1,6 +1,33 @@
 // packages/reactivity/src/effect.ts
-function effect() {
+function effect(fn, options) {
+  const _effect = new ReactiveEffect(fn, () => {
+    _effect.run();
+  });
+  _effect.run();
 }
+var activeEffect;
+var ReactiveEffect = class {
+  // 创建的 effect 默认是响应式的
+  // fn 用户编写的函数
+  // scheduler 如果 fn 中依赖的数据发生变化后，需要重新调用 -> run()
+  constructor(fn, scheduler) {
+    this.fn = fn;
+    this.scheduler = scheduler;
+    this.active = true;
+  }
+  run() {
+    if (!this.active) {
+      return this.fn();
+    }
+    let lastEffect = activeEffect;
+    try {
+      activeEffect = this;
+      return this.fn();
+    } finally {
+      activeEffect = lastEffect;
+    }
+  }
+};
 
 // packages/shared/src/index.ts
 function isObject(value) {
@@ -13,6 +40,7 @@ var mutableHandlers = {
     if (key === "__v_isReactive" /* IS_REACTIVE */) {
       return true;
     }
+    console.log(activeEffect, key);
     return Reflect.get(target, key, receiver);
   },
   set(target, key, value, receiver) {
@@ -41,6 +69,7 @@ function reactive(target) {
   return createReactiveObject(target);
 }
 export {
+  activeEffect,
   effect,
   reactive
 };
