@@ -34,13 +34,20 @@ function isObject(value) {
   return typeof value === "object" && value !== null;
 }
 
+// packages/reactivity/src/reactiveEffect.ts
+function track(target, key) {
+  if (activeEffect) {
+    console.log(key, activeEffect);
+  }
+}
+
 // packages/reactivity/src/baseHandler.ts
 var mutableHandlers = {
   get(target, key, receiver) {
     if (key === "__v_isReactive" /* IS_REACTIVE */) {
       return true;
     }
-    console.log(activeEffect, key);
+    track(target, key);
     return Reflect.get(target, key, receiver);
   },
   set(target, key, value, receiver) {

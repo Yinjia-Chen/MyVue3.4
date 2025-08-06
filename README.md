@@ -86,6 +86,8 @@
 
 ### 3.1 reactivity / reactive
 
+> 说明：核心API，创建响应式对象
+>
 > 设计点：
 >
 > 1. 统一检查：是否是对象，不是对象直接返回
@@ -164,3 +166,64 @@
    ```
 
 6. 
+
+------
+
+### 3.2 reactivity / effect
+
+> 说明：副作用（如渲染、计算、watch 回调等），默认执行一次收集依赖，后续对应的响应式状态变化时自动重新执行
+>
+> 设计点：
+>
+> 1. 默认立即执行：创建 effect 时，自动执行一次回调，完成首次依赖收集
+> 2. 全局 activeEffect：导出模块级变量 activeEffect，用于在 run 中标记“当前正在执行”的 effect，依赖收集阶段读取，从而把对应 effect 注册到依赖集合
+> 3. 嵌套 effect 支持：使用 lastEffect 保存外层 effect 实例，执行完内层后重新将保存的lastEffect赋值给 activeEffect
+
+1. 默认立即执行：创建 effect 时，自动执行一次回调，完成首次依赖收集
+
+    ```typescript
+    export function effect(fn, options?){
+       // 创建一个 effect，只要依赖的属性变化了就要执行回调
+      const _effect = new ReactiveEffect(fn, () => {
+        // scheduler
+        _effect.run()
+      })
+      // 默认执行一次
+      _effect.run()
+    }
+    ```
+
+2. 全局 activeEffect：导出模块级变量 activeEffect，用于在 run 中标记“当前正在执行”的 effect，依赖收集阶段读取，从而把对应 effect 注册到依赖集合
+
+    ```typescript
+    export let activeEffect; // 导出全局 effect 先默认为undefined
+    class ReactiveEffect {
+      ...
+      run() {
+        ...
+        activeEffect = this; // 第一次执行时 将 activeEffect 指向当前实例 获取“当前正在执行”的 effect
+        ...
+      }
+      ...
+    }
+    ```
+
+3. 嵌套 effect 支持：使用 lastEffect 保存外层 effect 实例，执行完内层 effect 后重新将保存的 lastEffect 赋值给 activeEffect
+
+    ```typescript
+    class ReactiveEffect {
+      ...
+      run() {
+        let lastEffect = activeEffect; // 发生嵌套时，当前实例是外层 effect ，用 lastEffect 保存外层 effect 实例
+        try {
+          activeEffect = this; // 将当前实例指向 this，也就是内层 effect
+          ...
+        } finally { // 执行完内层 effect
+          activeEffect = lastEffect; // 将当前实例重新指向回外层 effect
+        }
+    		...
+      }
+    }
+    ```
+
+4. 

@@ -10,7 +10,9 @@ export function effect(fn, options?) {
   // 默认执行一次
   _effect.run()
 }
-export let activeEffect; // 导出全局 effect
+
+export let activeEffect; // 导出全局 effect 先默认为undefined
+
 class ReactiveEffect {
   public active = true; // 创建的 effect 默认是响应式的
   // fn 用户编写的函数
@@ -21,12 +23,12 @@ class ReactiveEffect {
     if (!this.active) {
       return this.fn() // 未激活时 执行后什么都不做
     }
-    let lastEffect = activeEffect
+    let lastEffect = activeEffect // 发生嵌套时，当前实例是外层 effect ，用 lastEffect 保存外层 effect 实例
     try {
       activeEffect = this
       return this.fn() // 依赖收集 -> state.name state.version
-    } finally {
-      activeEffect = lastEffect
+    } finally { // 执行完内层 effect
+      activeEffect = lastEffect // 将当前实例重新指向回外层 effect
     }
   }
 }

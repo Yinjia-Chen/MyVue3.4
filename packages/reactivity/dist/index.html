@@ -20,25 +20,21 @@
     // reactive：对数据，让数据变成响应式的
     // effect：对视图，副作用，数据变化后可以让 effect 重新执行 组件、watch、computed 等都基于 effect 实现
 
-    let obj = {name:'myvue',version:'3.4'}
+    let obj = { name: 'myvue', version: '3.4' }
     const state = reactive(obj);
-    console.log(state.name,state.version);
-
-
-    effect(()=>{
-      
-    })
-
 
     // effect 默认执行一次
-    // effect(() => {
-    //   app.innerHTML = `名称：${state.name} , 版本：${state.version}`
-    // })
+    effect(() => {
+      app.innerHTML = `名称：${state.name} , 版本：${state.version}`
+    })
+    effect(() => {
+      app.innerHTML = `名称：${state.name}`
+    })
 
     // 数据更新effect再执行一次
-    // setTimeout(() => {
-    //   state.version++;
-    // }, 1000);
+    setTimeout(() => {
+      state.version++;
+    }, 1000);
   </script>
 </body>
 
