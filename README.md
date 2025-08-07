@@ -123,11 +123,11 @@
    >// target: 要劫持的对象
    >// handler: 一个对象，固定了 trap (陷阱) 函数
    >const handler: ProxyHandler<any> = {
-   > get(target, propKey, receiver){};
-   > set(target, propKey, value, receiver){};
-   >    // target: 被代理的原始对象
-   >    // propKey: 当前访问/设置的属性名
-   >    // receiver: 触发本次 get/set 操作的对象
+   >     get(target, propKey, receiver){};
+   >     set(target, propKey, value, receiver){};
+   >        // target: 被代理的原始对象
+   >        // propKey: 当前访问/设置的属性名
+   >        // receiver: 触发本次 get/set 操作的对象
    >}
    >```
 
