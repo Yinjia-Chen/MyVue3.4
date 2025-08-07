@@ -133,7 +133,7 @@
 
 3. 实现缓存（性能优化）：设计 WeakMap，防止内存泄漏，劫持前检查缓存表，存在直接返回
 
-4. ```typescript
+   ```typescript
    const reactiveMap = new WeakMap()
    // 根据对象缓存 代理后的结果
    reactiveMap.set(target,proxy)
@@ -144,7 +144,7 @@
    }
    ```
 
-5. 重复代理（性能优化）：在 get 中维护一个 IS_REACTIVE 属性，访问该属性，未代理对象返回 undefined 跳过，已代理对象访问时触发 get ，访问到该属性返回 true，表示属性存在，意味着已经代理过，直接返回
+4. 重复代理（性能优化）：在 get 中维护一个 IS_REACTIVE 属性，访问该属性，未代理对象返回 undefined 跳过，已代理对象访问时触发 get ，访问到该属性返回 true，表示属性存在，意味着已经代理过，直接返回
 
    ```typescript
    // 创建一个枚举，标记是否是响应式（已代理）
