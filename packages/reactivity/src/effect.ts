@@ -13,6 +13,7 @@ export function effect(fn, options?) {
 
 export let activeEffect; // 导出全局 effect 先默认为undefined
 
+// effectScope.stop() 停止所有的 effect 不参加响应式处理
 class ReactiveEffect {
   public active = true; // 创建的 effect 默认是响应式的
   // fn 用户编写的函数
@@ -30,5 +31,8 @@ class ReactiveEffect {
     } finally { // 执行完内层 effect
       activeEffect = lastEffect // 将当前实例重新指向回外层 effect
     }
+  }
+  stop() { 
+    this.active = false; // 后续实现
   }
 }
